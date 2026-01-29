@@ -1,29 +1,35 @@
 package com.example.todo
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class LoginViewModel: ViewModel() {
-    var uiState by mutableStateOf(LoginUiState())
-        private set
+    private val _uiState = MutableStateFlow(LoginUiState())
+        val uiState: StateFlow<LoginUiState> = _uiState
 
     fun onEmailChange(value: String){
-        uiState = uiState.copy(email = value)
+        _uiState.update { it.copy(email = value) }
     }
 
     fun onPasswordChange(value: String){
-        uiState = uiState.copy(password = value)
+        _uiState.update{it.copy(password = value)}
     }
 
     fun login(){
-        if(uiState.email.isBlank() || uiState.password.isBlank()){
-            uiState = uiState.copy(error = "Fields cannot be empty...")
+        val state = _uiState.value
+        if(state.email.isBlank() || state.password.isBlank()){
+            _uiState.update { it.copy(error = "Fields cannot be empty...")}
             return
         }
-
-        uiState = uiState.copy(isLoading = true)
-
+        viewModelScope.launch {
+        _uiState.update{it.copy(isLoading = true)}
+        delay(timeMillis = 1500)
+        _uiState.update{it.copy(isLoading = false)}
+        }
     }
 }
