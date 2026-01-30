@@ -15,10 +15,11 @@ fun AppNavGraph(navController: NavHostController) {
     val taskViewModel: TaskViewModel = viewModel(
         factory = TaskViewModelFactory(application.database.taskDao())
     )
+    val loginViewModel: LoginViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
-            LoginScreen(navController)
+            LoginScreen(navController, loginViewModel)
         }
         composable("home") {
             HomeScreen(navController, taskViewModel)
@@ -32,6 +33,15 @@ fun AppNavGraph(navController: NavHostController) {
         ) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getInt("taskId")
             AddTaskScreen(navController, taskViewModel, taskId)
+        }
+        composable(
+            "taskDetail/{taskId}",
+            arguments = listOf(navArgument("taskId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getInt("taskId")
+            if (taskId != null) {
+                TaskDetailScreen(navController, taskViewModel, taskId)
+            }
         }
     }
 }

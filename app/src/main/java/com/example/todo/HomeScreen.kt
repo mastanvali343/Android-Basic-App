@@ -56,7 +56,7 @@ fun HomeScreen(navController: NavController, taskViewModel: TaskViewModel) {
             ) {
                 items(tasks) { task ->
                     TaskItem(task = task) {
-                        navController.navigate("editTask/${task.id}")
+                        navController.navigate("taskDetail/${task.id}")
                     }
                 }
             }

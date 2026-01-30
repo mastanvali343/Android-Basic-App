@@ -18,12 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.todo.ui.LoginEvent
 
 @Composable
-fun LoginScreen(navController: NavController,viewModel: LoginViewModel = viewModel()){
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel){
     val state by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
