@@ -11,19 +11,36 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.todo.ui.LoginEvent
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = viewModel()){
-    val state = viewModel.uiState
-
+fun LoginScreen(navController: NavController,viewModel: LoginViewModel = viewModel()){
+    val state by viewModel.uiState.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when(event) {
+                LoginEvent.Success -> {
+                    navController.navigate("home"){
+                        popUpTo("login"){
+                            inclusive = true
+                        }
+                    }
+                }
+            }
+        }
+    }
     Column(modifier = Modifier.fillMaxSize()
-                                .padding(16.dp),
-                verticalArrangement = Arrangement.Center) {
+        .padding(16.dp),
+        verticalArrangement = Arrangement.Center) {
 
         OutlinedTextField(value = state.email, onValueChange = viewModel::onEmailChange,
             label = { Text(text = "Email") },
@@ -46,7 +63,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()){
         Button(onClick = viewModel::login,
             enabled = !state.isLoading,
             modifier = Modifier.fillMaxWidth()
-            ) {
+        ) {
             Text(text = if(state.isLoading) "Loading..." else "Login")
         }
 
